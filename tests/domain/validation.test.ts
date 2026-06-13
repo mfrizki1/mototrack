@@ -46,3 +46,21 @@ describe('checkNewKm', () => {
     expect(checkNewKm(16000, 10000, lastLog, now)).toEqual({ ok: true })
   })
 })
+
+import { validateInterval, validateMotorName } from '../../src/domain/validation'
+
+describe('validateInterval', () => {
+  it('accepts valid km interval', () => expect(validateInterval(2500)).toEqual({ ok: true }))
+  it('accepts valid day interval', () => expect(validateInterval(60)).toEqual({ ok: true }))
+  it('rejects zero', () => expect(validateInterval(0)).toEqual({ ok: false }))
+  it('rejects negative', () => expect(validateInterval(-1)).toEqual({ ok: false }))
+  it('rejects over 1_000_000', () => expect(validateInterval(1_000_001)).toEqual({ ok: false }))
+  it('accepts boundary 1_000_000', () => expect(validateInterval(1_000_000)).toEqual({ ok: true }))
+})
+
+describe('validateMotorName', () => {
+  it('accepts normal name', () => expect(validateMotorName('Vario 125')).toEqual({ ok: true }))
+  it('rejects empty string', () => expect(validateMotorName('')).toEqual({ ok: false }))
+  it('rejects name over 100 chars', () => expect(validateMotorName('a'.repeat(101))).toEqual({ ok: false }))
+  it('accepts exactly 100 chars', () => expect(validateMotorName('a'.repeat(100))).toEqual({ ok: true }))
+})

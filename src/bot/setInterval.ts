@@ -2,6 +2,7 @@ import { InlineKeyboard, type Bot, type Context } from 'grammy'
 import type { Conversation } from '@grammyjs/conversations'
 import type { MyContext } from '../context'
 import { getMotorByTelegramId, setComponentInterval } from '../data'
+import { validateInterval } from '../domain/validation'
 import { esc } from '../html'
 
 export async function setInterval(
@@ -41,7 +42,7 @@ export async function setInterval(
   const rawKm = kmMsg.message.text.trim()
   if (rawKm !== '-') {
     const parsed = parseInt(rawKm.replace(/\./g, ''), 10)
-    if (isNaN(parsed) || parsed <= 0) {
+    if (isNaN(parsed) || !validateInterval(parsed).ok) {
       await ctx.reply('Input tidak valid. Interval tidak diubah.')
       return
     }
@@ -53,7 +54,7 @@ export async function setInterval(
   const rawDays = daysMsg.message.text.trim()
   if (rawDays !== '-') {
     const parsed = parseInt(rawDays, 10)
-    if (isNaN(parsed) || parsed <= 0) {
+    if (isNaN(parsed) || !validateInterval(parsed).ok) {
       await ctx.reply('Input tidak valid. Interval tidak diubah.')
       return
     }

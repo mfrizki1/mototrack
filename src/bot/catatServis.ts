@@ -11,7 +11,8 @@ function componentKeyboard(components: { id: number; name: string }[]): InlineKe
 
 export function registerCatatServis(bot: Bot<MyContext>): void {
   bot.command('catat_servis', async (ctx) => {
-    const motor = await getMotorByTelegramId(BigInt(ctx.from!.id))
+    if (!ctx.from) return
+    const motor = await getMotorByTelegramId(BigInt(ctx.from.id))
     if (!motor) return ctx.reply('Belum ada motor. Daftar dulu dengan /daftar_motor.')
     await ctx.reply(
       `Pilih komponen yang dicek/diganti (km servis = ${motor.currentKm} km), lalu tekan Selesai:`,
@@ -57,8 +58,13 @@ export function registerCatatServis(bot: Bot<MyContext>): void {
     if (chosenIds.length === 0) {
       return ctx.editMessageText('Tidak ada komponen dipilih. Servis tidak dicatat.')
     }
-    await resetComponents(motor.id, chosenIds, motor.currentKm, new Date())
-    const names = motor.components.filter((c) => chosenIds.includes(c.id)).map((c) => c.name)
+    const validIds = new Set(motor.components.map((c) => c.id))
+    const safeIds = chosenIds.filter((id) => validIds.has(id))
+    if (safeIds.length === 0) {
+      return ctx.editMessageText('Tidak ada komponen dipilih. Servis tidak dicatat.')
+    }
+    await resetComponents(motor.id, safeIds, motor.currentKm, new Date())
+    const names = motor.components.filter((c) => safeIds.includes(c.id)).map((c) => c.name)
     await ctx.editMessageText(`Servis dicatat untuk: ${names.join(', ')}. Hitungan direset.`)
   })
 }

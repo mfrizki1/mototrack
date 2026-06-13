@@ -16,8 +16,16 @@ const config = loadConfig()
 export const bot = new Bot<MyContext>(config.botToken)
 
 bot.use(conversations())
-bot.use(createConversation(daftarMotor, 'daftarMotor'))
-bot.use(createConversation(setIntervalConv, 'setInterval'))
+bot.use(createConversation(daftarMotor, { id: 'daftarMotor', maxMillisecondsToWait: 5 * 60 * 1000 }))
+bot.use(createConversation(setIntervalConv, { id: 'setInterval', maxMillisecondsToWait: 5 * 60 * 1000 }))
+
+const ownerId = process.env.OWNER_ID ? BigInt(process.env.OWNER_ID) : null
+if (ownerId !== null) {
+  bot.use((ctx, next) => {
+    if (ctx.from && BigInt(ctx.from.id) === ownerId) return next()
+    return Promise.resolve()
+  })
+}
 
 registerStart(bot)
 registerDaftarMotor(bot)

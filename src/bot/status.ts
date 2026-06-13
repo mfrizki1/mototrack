@@ -6,7 +6,8 @@ import { esc } from '../html'
 
 export function registerStatus(bot: Bot<MyContext>): void {
   bot.command('status', async (ctx) => {
-    const motor = await getMotorByTelegramId(BigInt(ctx.from!.id))
+    if (!ctx.from) return
+    const motor = await getMotorByTelegramId(BigInt(ctx.from.id))
     if (!motor) return ctx.reply('Belum ada motor. Daftar dulu dengan /daftar_motor.')
 
     const now = new Date()
@@ -16,7 +17,7 @@ export function registerStatus(bot: Bot<MyContext>): void {
       if (ev.sisaKm != null) bits.push(ev.sisaKm <= 0 ? `lewat ${-ev.sisaKm} km` : `${ev.sisaKm} km lagi`)
       if (ev.sisaHari != null) bits.push(ev.sisaHari <= 0 ? `lewat ${-ev.sisaHari} hari` : `${ev.sisaHari} hari lagi`)
       const icon = ev.stage === 'OVERDUE' ? '⚠️' : ev.stage === 'APPROACHING' ? '🔔' : '✅'
-      return `${icon} ${c.name}: ${bits.join(', ') || '—'}`
+      return `${icon} ${esc(c.name)}: ${bits.join(', ') || '—'}`
     })
 
     await ctx.reply(

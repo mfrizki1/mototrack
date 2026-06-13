@@ -1,4 +1,14 @@
 const ONE_DAY_MS = 24 * 60 * 60 * 1000
+
+export function validateInterval(n: number): { ok: true } | { ok: false } {
+  if (n <= 0 || n > 1_000_000) return { ok: false }
+  return { ok: true }
+}
+
+export function validateMotorName(name: string): { ok: true } | { ok: false } {
+  if (!name || name.length > 100) return { ok: false }
+  return { ok: true }
+}
 const JUMP_LIMIT_KM = 5000
 
 export function parseKm(raw: string): number | null {

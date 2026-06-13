@@ -2,7 +2,7 @@ import { InlineKeyboard, type Bot, type Context } from 'grammy'
 import type { Conversation } from '@grammyjs/conversations'
 import type { MyContext } from '../context'
 import type { MotorType } from '../domain/presets'
-import { parseKm } from '../domain/validation'
+import { parseKm, validateMotorName } from '../domain/validation'
 import { ensureUser, getMotorByTelegramId, createMotorWithPresets } from '../data'
 import { esc } from '../html'
 
@@ -17,6 +17,10 @@ export async function daftarMotor(conversation: Conversation<MyContext, Context>
   await ctx.reply('Nama / merk motormu? (contoh: Vario 125)')
   const nameMsg = await conversation.waitFor('message:text')
   const name = nameMsg.message.text.trim()
+  if (!validateMotorName(name).ok) {
+    await ctx.reply('Nama motor tidak valid (kosong atau lebih dari 100 karakter).')
+    return
+  }
 
   const kb = new InlineKeyboard()
     .text('Matic', 'MATIC').text('Bebek', 'BEBEK').text('Sport', 'SPORT')
@@ -48,6 +52,7 @@ export async function daftarMotor(conversation: Conversation<MyContext, Context>
 
 export function registerDaftarMotor(bot: Bot<MyContext>): void {
   bot.command('daftar_motor', async (ctx) => {
+    if (!ctx.from) return
     await ctx.conversation.enter('daftarMotor')
   })
 }

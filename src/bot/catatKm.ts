@@ -16,7 +16,8 @@ async function saveAndRemind(ctx: MyContext, motorId: number, km: number) {
 
 export function registerCatatKm(bot: Bot<MyContext>): void {
   bot.command('catat_km', async (ctx) => {
-    const motor = await getMotorByTelegramId(BigInt(ctx.from!.id))
+    if (!ctx.from) return
+    const motor = await getMotorByTelegramId(BigInt(ctx.from.id))
     if (!motor) return ctx.reply('Belum ada motor. Daftar dulu dengan /daftar_motor.')
 
     const arg = ctx.match.trim()
@@ -50,8 +51,24 @@ export function registerCatatKm(bot: Bot<MyContext>): void {
   bot.callbackQuery(/^km_ok:(\d+)$/, async (ctx) => {
     const km = Number(ctx.match[1])
     const motor = await getMotorByTelegramId(BigInt(ctx.from.id))
+    if (!motor) {
+      await ctx.answerCallbackQuery()
+      return
+    }
+
+    // Re-validate: reject if km now represents a decrease (stale callback guard)
+    const lastLog = await prisma.kmLog.findFirst({
+      where: { motorId: motor.id },
+      orderBy: { createdAt: 'desc' },
+    })
+    const lastLogAt = lastLog?.createdAt ?? motor.registeredAt
+    const check = checkNewKm(km, motor.currentKm, lastLogAt, new Date())
+    if (!check.ok && check.reason === 'decrease') {
+      await ctx.answerCallbackQuery()
+      return ctx.editMessageText(`Tidak bisa disimpan: km ${km} lebih kecil dari current ${motor.currentKm} km.`)
+    }
+
     await ctx.answerCallbackQuery()
-    if (!motor) return
     await saveAndRemind(ctx, motor.id, km)
     await ctx.editMessageText(`Tercatat: ${km} km.`)
   })

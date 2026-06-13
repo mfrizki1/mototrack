@@ -2,10 +2,12 @@ import type { Bot } from 'grammy'
 import type { MyContext } from '../context'
 import { prisma } from '../db'
 import { getMotorByTelegramId } from '../data'
+import { esc } from '../html'
 
 export function registerRiwayat(bot: Bot<MyContext>): void {
   bot.command('riwayat', async (ctx) => {
-    const motor = await getMotorByTelegramId(BigInt(ctx.from!.id))
+    if (!ctx.from) return
+    const motor = await getMotorByTelegramId(BigInt(ctx.from.id))
     if (!motor) return ctx.reply('Belum ada motor. Daftar dulu dengan /daftar_motor.')
 
     const [services, kms] = await Promise.all([
@@ -20,7 +22,7 @@ export function registerRiwayat(bot: Bot<MyContext>): void {
 
     const fmt = (d: Date) => d.toISOString().slice(0, 10)
     const svcLines = services.length
-      ? services.map((s) => `• ${fmt(s.date)} — ${s.component.name} @ ${s.km} km`).join('\n')
+      ? services.map((s) => `• ${fmt(s.date)} — ${esc(s.component.name)} @ ${s.km} km`).join('\n')
       : 'Belum ada riwayat servis.'
     const kmLines = kms.length
       ? kms.map((k) => `• ${fmt(k.createdAt)} — ${k.km} km`).join('\n')
