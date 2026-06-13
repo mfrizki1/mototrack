@@ -1,0 +1,32 @@
+{
+  "name": "mototrack",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/bot.js",
+    "dev": "tsx watch src/bot.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@grammyjs/conversations": "^2.1.1",
+    "@prisma/client": "^7.8.0",
+    "grammy": "^1.43.0",
+    "node-cron": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "@types/node-cron": "^3.0.11",
+    "@vitest/coverage-v8": "^4.1.8",
+    "prisma": "^7.8.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  }
+}
