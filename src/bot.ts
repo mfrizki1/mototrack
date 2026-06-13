@@ -40,6 +40,14 @@ bot.catch((err) => {
 })
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  bot.api.setMyCommands([
+    { command: 'daftar_motor', description: 'Daftarkan motor baru' },
+    { command: 'catat_km', description: 'Perbarui kilometer motor' },
+    { command: 'status', description: 'Lihat status servis tiap komponen' },
+    { command: 'catat_servis', description: 'Catat komponen yang sudah diservis' },
+    { command: 'set_interval', description: 'Ubah interval servis komponen' },
+    { command: 'riwayat', description: 'Riwayat km & servis' },
+  ])
   startDailyReminders(bot.api)
   bot.start()
   console.log('MotoTrack bot started (polling).')
