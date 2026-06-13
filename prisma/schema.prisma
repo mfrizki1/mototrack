@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  telegramId BigInt   @unique
+  name       String?
+  createdAt  DateTime @default(now())
+  motors     Motor[]
+}
+
+model Motor {
+  id           Int          @id @default(autoincrement())
+  userId       Int
+  user         User         @relation(fields: [userId], references: [id])
+  name         String
+  type         MotorType
+  initialKm    Int
+  currentKm    Int
+  registeredAt DateTime     @default(now())
+  components   Component[]
+  serviceLogs  ServiceLog[]
+  kmLogs       KmLog[]
+}
+
+model Component {
+  id                Int          @id @default(autoincrement())
+  motorId           Int
+  motor             Motor        @relation(fields: [motorId], references: [id])
+  key               String
+  name              String
+  intervalKm        Int?
+  intervalDays      Int?
+  lastServiceKm     Int
+  lastServiceDate   DateTime
+  lastNotifiedStage NotifyStage  @default(NONE)
+  serviceLogs       ServiceLog[]
+
+  @@unique([motorId, key])
+}
+
+model ServiceLog {
+  id          Int       @id @default(autoincrement())
+  motorId     Int
+  motor       Motor     @relation(fields: [motorId], references: [id])
+  componentId Int
+  component   Component @relation(fields: [componentId], references: [id])
+  date        DateTime  @default(now())
+  km          Int
+  note        String?
+}
+
+model KmLog {
+  id        Int      @id @default(autoincrement())
+  motorId   Int
+  motor     Motor    @relation(fields: [motorId], references: [id])
+  km        Int
+  createdAt DateTime @default(now())
+}
+
+enum MotorType {
+  MATIC
+  BEBEK
+  SPORT
+}
+
+enum NotifyStage {
+  NONE
+  APPROACHING
+  OVERDUE
+}
