@@ -65,7 +65,11 @@ export async function setInterval(
   }
 
   await conversation.external(() =>
-    setComponentInterval(componentId, newKm, newDays),
+    setComponentInterval(
+      componentId,
+      newKm ?? component.intervalKm,
+      newDays ?? component.intervalDays,
+    ),
   )
 
   const parts: string[] = []

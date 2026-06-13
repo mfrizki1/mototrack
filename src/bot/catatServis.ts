@@ -30,8 +30,7 @@ export function registerCatatServis(bot: Bot<MyContext>): void {
         if ('callback_data' in btn && btn.callback_data) {
           const chosen = btn.callback_data === `srv:${id}`
           const already = btn.text.startsWith('✓ ')
-          const isThisRow = btn.callback_data.startsWith('srv:')
-          const text = isThisRow && (chosen ? !already : already)
+          const text = chosen
             ? (already ? btn.text.slice(2) : `✓ ${btn.text}`)
             : btn.text
           next.text(text, btn.callback_data)
