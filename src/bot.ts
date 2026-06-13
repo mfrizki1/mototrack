@@ -10,6 +10,7 @@ import { registerStatus } from './bot/status'
 import { registerCatatServis } from './bot/catatServis'
 import { setInterval as setIntervalConv, registerSetInterval } from './bot/setInterval'
 import { registerRiwayat } from './bot/riwayat'
+import { startDailyReminders } from './scheduler/cron'
 
 const config = loadConfig()
 export const bot = new Bot<MyContext>(config.botToken)
@@ -31,6 +32,7 @@ bot.catch((err) => {
 })
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  startDailyReminders(bot.api)
   bot.start()
   console.log('MotoTrack bot started (polling).')
 }
