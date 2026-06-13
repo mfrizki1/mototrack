@@ -2,6 +2,7 @@ import type { Bot } from 'grammy'
 import type { MyContext } from '../context'
 import { getMotorByTelegramId, toComponentState } from '../data'
 import { evaluateComponent } from '../domain/reminder'
+import { esc } from '../html'
 
 export function registerStatus(bot: Bot<MyContext>): void {
   bot.command('status', async (ctx) => {
@@ -19,8 +20,8 @@ export function registerStatus(bot: Bot<MyContext>): void {
     })
 
     await ctx.reply(
-      `*${motor.name}* — ${motor.currentKm} km\n\n` + lines.join('\n'),
-      { parse_mode: 'Markdown' },
+      `<b>${esc(motor.name)}</b> — ${motor.currentKm} km\n\n` + lines.join('\n'),
+      { parse_mode: 'HTML' },
     )
   })
 }

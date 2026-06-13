@@ -2,6 +2,7 @@ import { InlineKeyboard, type Bot, type Context } from 'grammy'
 import type { Conversation } from '@grammyjs/conversations'
 import type { MyContext } from '../context'
 import { getMotorByTelegramId, setComponentInterval } from '../data'
+import { esc } from '../html'
 
 export async function setInterval(
   conversation: Conversation<MyContext, Context>,
@@ -29,8 +30,8 @@ export async function setInterval(
   if (!component) return
 
   await ctx.reply(
-    `Komponen: *${component.name}*\nInterval saat ini: ${component.intervalKm ?? '—'} km / ${component.intervalDays ?? '—'} hari\n\nMasukkan interval km baru (atau ketik "-" untuk tidak ubah):`,
-    { parse_mode: 'Markdown' },
+    `Komponen: <b>${esc(component.name)}</b>\nInterval saat ini: ${component.intervalKm ?? '—'} km / ${component.intervalDays ?? '—'} hari\n\nMasukkan interval km baru (atau ketik "-" untuk tidak ubah):`,
+    { parse_mode: 'HTML' },
   )
 
   let newKm: number | null = null
@@ -75,8 +76,8 @@ export async function setInterval(
   const parts: string[] = []
   if (newKm !== null) parts.push(`${newKm} km`)
   if (newDays !== null) parts.push(`${newDays} hari`)
-  await ctx.reply(`Interval *${component.name}* diperbarui: ${parts.join(' / ')}.`, {
-    parse_mode: 'Markdown',
+  await ctx.reply(`Interval <b>${esc(component.name)}</b> diperbarui: ${parts.join(' / ')}.`, {
+    parse_mode: 'HTML',
   })
 }
 

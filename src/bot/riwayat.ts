@@ -26,8 +26,8 @@ export function registerRiwayat(bot: Bot<MyContext>): void {
       ? kms.map((k) => `• ${fmt(k.createdAt)} — ${k.km} km`).join('\n')
       : 'Belum ada catatan km.'
 
-    await ctx.reply(`*Riwayat servis:*\n${svcLines}\n\n*Catatan km terakhir:*\n${kmLines}`, {
-      parse_mode: 'Markdown',
+    await ctx.reply(`<b>Riwayat servis:</b>\n${svcLines}\n\n<b>Catatan km terakhir:</b>\n${kmLines}`, {
+      parse_mode: 'HTML',
     })
   })
 }

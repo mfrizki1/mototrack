@@ -4,6 +4,7 @@ import type { MyContext } from '../context'
 import type { MotorType } from '../domain/presets'
 import { parseKm } from '../domain/validation'
 import { ensureUser, getMotorByTelegramId, createMotorWithPresets } from '../data'
+import { esc } from '../html'
 
 export async function daftarMotor(conversation: Conversation<MyContext, Context>, ctx: Context): Promise<void> {
   const from = ctx.from!
@@ -39,9 +40,9 @@ export async function daftarMotor(conversation: Conversation<MyContext, Context>
   })
 
   await ctx.reply(
-    `Motor *${name}* (${type}) terdaftar dengan ${km} km. ` +
+    `Motor <b>${esc(name)}</b> (${type}) terdaftar dengan ${km} km. ` +
       `Interval komponen sudah aktif otomatis.\n\nCek dengan /status.`,
-    { parse_mode: 'Markdown' },
+    { parse_mode: 'HTML' },
   )
 }
 

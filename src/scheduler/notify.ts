@@ -1,4 +1,5 @@
 import type { Evaluation } from '../domain/reminder'
+import { esc } from '../html'
 
 export function buildReminderMessage(motorName: string, due: Evaluation[]): string {
   const lines = due.map((d) => {
@@ -9,7 +10,7 @@ export function buildReminderMessage(motorName: string, due: Evaluation[]): stri
     return `${label} — ${d.name} (${parts.join(', ')})`
   })
   return (
-    `Pengingat servis untuk *${motorName}*:\n` +
+    `Pengingat servis untuk <b>${esc(motorName)}</b>:\n` +
     lines.join('\n') +
     `\n\nSudah servis? Catat dengan /catat_servis`
   )

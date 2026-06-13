@@ -38,7 +38,7 @@ export async function runReminderCheck(api: Api, motor: MotorForCheck, now: Date
   const due = checks.filter((c) => c.shouldNotify).map((c) => c.evaluation)
   if (due.length > 0) {
     await api.sendMessage(Number(motor.user.telegramId), buildReminderMessage(motor.name, due), {
-      parse_mode: 'Markdown',
+      parse_mode: 'HTML',
     })
   }
 }
