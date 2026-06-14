@@ -16,6 +16,7 @@ npm-debug.log*
 
 # Tooling
 .code-review-graph/
+.mcp.json
 
 # OS
 .DS_Store
